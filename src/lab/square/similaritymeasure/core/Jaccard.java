@@ -1,6 +1,7 @@
 package lab.square.similaritymeasure.core;
 
-import java.util.Collection;
+//import java.util.Collection;
+import java.util.List;
 
 public class Jaccard implements ISimilarityMeasurer {
 	
@@ -10,7 +11,7 @@ public class Jaccard implements ISimilarityMeasurer {
 	}
 	
 	@Override
-	public double comparate(IVector v1, IVector v2) throws Exception {
+	public double compare(IVector v1, IVector v2) throws Exception {
 		if(v1.getDimension() != v2.getDimension()) {
 			throw new Exception("The dimensions are not the same");
 		}
@@ -39,11 +40,23 @@ public class Jaccard implements ISimilarityMeasurer {
 		return result;
 	}
 
-	@Override
-	public IVector calculateMostSimilar(IVector vector, Collection<IVector> others) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	
+	@Override
+	public double[] calculateMostSimilar(IVector target, List<IVector> others, int exclude) throws Exception {
+		double [] max = new double[] {0.0, -1.0}; // 최종 유사도, 최종 인덱스 
+		
+		for(int i=0; i<others.size(); i++) {
+			if(i == exclude) continue;
+			IVector it = others.get(i);
+			if(target.getDimension() != it.getDimension()) {
+				throw new Exception("The dimensions are not the same");
+			} 
+			double res = compare(target, it);
+			if(max[0] < res) {
+				max[0] = res;
+				max[1] = i;
+			}
+		}
+		return max;
+	}
 }
