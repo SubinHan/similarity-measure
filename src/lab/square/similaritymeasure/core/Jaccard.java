@@ -1,5 +1,7 @@
 package lab.square.similaritymeasure.core;
 
+import java.util.Collection;
+import java.util.LinkedList;
 //import java.util.Collection;
 import java.util.List;
 
@@ -42,21 +44,28 @@ public class Jaccard implements ISimilarityMeasurer {
 
 	
 	@Override
-	public double[] calculateMostSimilar(IVector target, List<IVector> others, int exclude) throws Exception {
-		double [] max = new double[] {0.0, -1.0}; // 최종 유사도, 최종 인덱스 
+	public MostSimilarVector calculateMostSimilar(List<IVector> others, int target) throws Exception {
+		double max = 0; // 최종 유사도, 최종 인덱스 
+		Collection<IVector> vectors = new LinkedList<IVector>();
 		
 		for(int i=0; i<others.size(); i++) {
-			if(i == exclude) continue;
+			if(i == target) continue;
 			IVector it = others.get(i);
-			if(target.getDimension() != it.getDimension()) {
+			if(others.get(target).getDimension() != it.getDimension()) {
 				throw new Exception("The dimensions are not the same");
 			} 
-			double res = compare(target, it);
-			if(max[0] < res) {
-				max[0] = res;
-				max[1] = i;
+			double res = compare(others.get(target), it);
+			if(max < res) {
+				max = res;
+				vectors.clear();
+				vectors.add(others.get(i));
+			} else if(max == res) {
+				vectors.add(others.get(i));
 			}
+			
 		}
-		return max;
+		return new MostSimilarVector(max, vectors);
 	}
+	
+	
 }

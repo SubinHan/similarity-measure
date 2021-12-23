@@ -9,6 +9,7 @@ import org.junit.Test;
 import lab.square.similaritymeasure.core.ISimilarityMeasurer;
 import lab.square.similaritymeasure.core.IVector;
 import lab.square.similaritymeasure.core.Jaccard;
+import lab.square.similaritymeasure.core.MostSimilarVector;
 
 public class TestSimilarityMeasure {
 	@Test
@@ -33,11 +34,12 @@ public class TestSimilarityMeasure {
 		System.out.println(list.size());
 		for(int i=0; i<list.size(); i++) {
 			IVector target = list.get(i);
-			double[] result = measurer.calculateMostSimilar(target, list, i);  // list의 i번째 요소를 타켓으로, 그와 제일 비슷한 IVector를 찾는다. 단, i 제외																		// 단, 자기 자신은 list에서 제외한 채로.
-			IVector resultVector = list.get((int)result[1]);
-			System.out.print("list의 "+i+"번째 요소 ");   target.printAll();   System.out.print(" 와 \n");
-			System.out.print("list의 "+(int)result[1]+"번째 요소 ");   resultVector.printAll();   
-			System.out.print(" 은 가장 유사하다. (유사도 " + result[0] +")\n\n");
+			MostSimilarVector result = measurer.calculateMostSimilar(list, i);  // list의 i번째 요소를 타켓으로, 그와 제일 비슷한 IVector를 찾는다. 단, i 제외																		// 단, 자기 자신은 list에서 제외한 채로.
+			for(IVector vector : result.vectors) {
+				System.out.print("list의 "+i+"번째 요소 ");   target.printAll();   System.out.print(" 와 \n");
+				vector.printAll();   
+				System.out.print(" 은 가장 유사하다. (유사도 " + result.similarity +")\n\n");
+			}
 		}
 		
 		
@@ -73,6 +75,22 @@ public class TestSimilarityMeasure {
 			for(boolean v : vector) {
 				System.out.print(v + " ");
 			}
+		}
+		
+		@Override
+		public boolean equals(IVector vector) {
+			int i = 0;
+			
+			if(getDimension() != vector.getDimension()) {
+				return false;
+			}
+			
+			for(boolean v : this.vector) {
+				if(v != vector.getValue(i++)) {
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 }
