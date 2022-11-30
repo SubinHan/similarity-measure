@@ -13,9 +13,9 @@ public class Jaccard implements ISimilarityMeasurer {
 	}
 	
 	@Override
-	public double compare(IVector v1, IVector v2) throws Exception {
+	public double compare(IVector v1, IVector v2) throws RuntimeException {
 		if(v1.getDimension() != v2.getDimension()) {
-			throw new Exception("The dimensions are not the same");
+			throw new RuntimeException("The dimensions are not the same");
 		}
 		
 		int dimension = v1.getDimension();
@@ -44,7 +44,7 @@ public class Jaccard implements ISimilarityMeasurer {
 
 	
 	@Override
-	public MostSimilarVector calculateMostSimilar(List<IVector> others, int target) throws Exception {
+	public MostSimilarVector calculateMostSimilar(List<IVector> others, int target) throws RuntimeException {
 		double max = 0; // 최종 유사도, 최종 인덱스 
 		Collection<IVector> vectors = new LinkedList<IVector>();
 		
@@ -52,7 +52,7 @@ public class Jaccard implements ISimilarityMeasurer {
 			if(i == target) continue;
 			IVector it = others.get(i);
 			if(others.get(target).getDimension() != it.getDimension()) {
-				throw new Exception("The dimensions are not the same");
+				throw new RuntimeException("The dimensions are not the same");
 			} 
 			double res = compare(others.get(target), it);
 			if(max < res) {
